@@ -1,0 +1,77 @@
+---
+title: "Variance_Test Shiny"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(EnvStats)
+library(stats)
+```
+
+
+```{r , echo=FALSE}
+sidebarPanel(
+   h6("Chisquare Test of Variance"),
+inputPanel(
+  
+   sliderInput("los", label = "Enter the level of significance:",
+                    min = 0.01, max = 0.1, value = 0.05, step = 0.01),
+   selectInput("Tail", label = " Choose among less(lower tail),greater(upper tail),two.sided(Two tail)", choices = c("less","greater","two.sided"), selected = "two.sided"),
+   numericInput("psd","Enter hypothesized population standard deviation ",30),
+    numericInput("ssd","Enter sample  standard deviation ",30),
+   numericInput("ss","Enter sample  size",16)
+),
+ h6("F Test of Comparing Variances"),
+inputPanel(
+  
+   sliderInput("los2", label = "Enter the level of significance:",
+                    min = 0.01, max = 0.1, value = 0.05, step = 0.01),
+   selectInput("Tail2", label = " Choose among less(lower tail),greater(upper tail),two.sided(Two tail)", choices = c("less","greater","two.sided"), selected = "two.sided"),
+   numericInput("ssd1","Enter standard deviation of sample1 ",30),
+    numericInput("ss1","Enter sample  size of sample1",16),
+    numericInput("ssd2","Enter standard deviation of sample2 ",30),
+   numericInput("ss2","Enter sample  size of sample2",16)
+)
+)
+mainPanel(
+  tabsetPanel(type = "tab",
+              tabPanel("ChiSquare Test for Variance", verbatimTextOutput("MD")),
+            tabPanel("F Test for Comparing Variances",verbatimTextOutput("MD2"))
+         
+         
+),
+h6("", tags$img(src ="K.JPG", height= 400, width=400))
+)
+   
+  
+  
+  
+
+
+
+
+
+output$MD<-renderPrint({
+rnorm2 = function(n,mean,sd) { mean+sd*scale(rnorm(n)) }
+data_set1 = rnorm2(n= input$ss, mean = 1000, sd = input$ssd)
+varTest(x = as.vector(data_set1),alternative = input$Tail,conf.level = (1-input$los),sigma.squared = (input$psd ^ 2))
+})
+
+output$MD2<-renderPrint({
+rnorm2 = function(n,mean,sd) { mean+sd*scale(rnorm(n)) }
+data_set1 = rnorm2(n= input$ss1, mean = 1000, sd = input$ssd1)
+data_set2 = rnorm2(n= input$ss2, mean = 1000, sd = input$ssd2)
+var.test(x = as.vector(data_set1),y =as.vector(data_set2),alternative = input$Tail2,conf.level = (1-input$los2))
+   } )
+   
+
+```
+
+
+
+
+
+
+
